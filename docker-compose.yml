@@ -24,7 +24,7 @@ services:
       - app-network
 
   localstack:
-    image: localstack/localstack:latest
+    image: localstack/localstack:3.0
     environment:
       - SERVICES=lambda,apigateway,dynamodb,s3
       - DEBUG=1
