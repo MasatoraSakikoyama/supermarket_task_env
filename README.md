@@ -20,6 +20,7 @@
 - Docker
 - Docker Compose
 - Git
+- Make
 
 ### リポジトリのクローン
 
@@ -31,13 +32,13 @@ cd supermarket_task_env
 既にクローン済みの場合、サブモジュールを初期化:
 
 ```bash
-git submodule update --init --recursive
+make init
 ```
 
 ### 起動
 
 ```bash
-docker-compose up --build
+make up-build
 ```
 
 ### アクセス
@@ -48,13 +49,36 @@ docker-compose up --build
 ### 停止
 
 ```bash
-docker-compose down
+make down
 ```
 
-## 開発
+## Makeコマンド一覧
 
-サブモジュールの更新:
+利用可能なコマンドを確認:
 
 ```bash
-git submodule update --remote
+make help
 ```
+
+### Git Submodule コマンド
+
+| コマンド | 説明 |
+|---------|------|
+| `make init` | サブモジュールを初期化 |
+| `make update` | サブモジュールを最新に更新 |
+| `make sync` | .gitmodulesの設定を同期 |
+| `make status` | サブモジュールの状態を表示 |
+| `make pull` | サブモジュールの変更をプル |
+
+### Docker Compose コマンド
+
+| コマンド | 説明 |
+|---------|------|
+| `make up` | コンテナを起動 |
+| `make up-build` | コンテナをビルドして起動 |
+| `make down` | コンテナを停止・削除 |
+| `make build` | コンテナをビルド |
+| `make restart` | コンテナを再起動 |
+| `make logs` | コンテナのログを表示 |
+| `make ps` | コンテナの状態を表示 |
+| `make clean` | ボリュームを含めてクリーンアップ |
