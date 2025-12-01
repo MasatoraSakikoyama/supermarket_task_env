@@ -42,11 +42,14 @@ services:
     volumes:
       - ./server:/app
     environment:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
       AWS_REGION: ap-northeast-1
+      AWS_EX2_METADATA_DISABLED: true
       DATABASE_URL: mysql+pymysql://user:password@rdb:3306/develop
-      DYNAMODB_TABLE_NAME: user-tokens
+      DYNAMODB_TABLE_NAME: Users
       DYNAMODB_REGION: ap-northeast-1
-      DYNAMODB_URL: http://localstack:4566
+      DYNAMODB_ENDPOINT_URL: http://localstack:4566
       JWT_SECRET_KEY: develop
       JWT_ALGORITHM: HS256
       JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 30
@@ -72,10 +75,11 @@ services:
     environment:
       SERVICES: dynamodb
       DEBUG: 1
-      AWS_DEFAULT_REGION: ap-northeast-1
+      DEFAULT_REGION: ap-northeast-1
     volumes:
       - localstack-data:/var/lib/localstack
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./localstack/init-scripts:/etc/localstack/init/ready.d
     networks:
       - app-network
     ports:
