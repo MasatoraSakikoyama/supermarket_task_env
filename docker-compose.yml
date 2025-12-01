@@ -12,6 +12,7 @@ services:
         condition: service_healthy
     networks:
       - app-network
+    restart: always
 
   client:
     build:
@@ -21,7 +22,7 @@ services:
       - ./client:/app
       - /app/node_modules
     environment:
-      - NODE_ENV=development
+      NODE_ENV: development
     networks:
       - app-network
     ports:
@@ -32,6 +33,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+    restart: always
 
   server:
     build:
@@ -40,10 +42,14 @@ services:
     volumes:
       - ./server:/app
     environment:
-      - AWS_DEFAULT_REGION=ap-northeast-1
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - DYNAMODB_ENDPOINT=http://localstack:4566
+      AWS_REGION: ap-northeast-1
+      DATABASE_URL: mysql+pymysql://user:password@rdb:3306/develop
+      DYNAMODB_TABLE_NAME: user-tokens
+      DYNAMODB_REGION: ap-northeast-1
+      DYNAMODB_URL: http://localstack:4566
+      JWT_SECRET_KEY: develop
+      JWT_ALGORITHM: HS256
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 30
     networks:
       - app-network
     ports:
@@ -59,15 +65,17 @@ services:
         condition: service_healthy
       rdb:
         condition: service_started
+    restart: always
 
   localstack:
     image: localstack/localstack:3.0
     environment:
-      - SERVICES=dynamodb
-      - DEBUG=1
-      - AWS_DEFAULT_REGION=ap-northeast-1
+      SERVICES: dynamodb
+      DEBUG: 1
+      AWS_DEFAULT_REGION: ap-northeast-1
     volumes:
       - localstack-data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - app-network
     ports:
@@ -78,6 +86,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+    restart: always
 
   rdb:
     image: mysql:8.0
@@ -86,6 +95,7 @@ services:
       MYSQL_DATABASE: develop
       MYSQL_USER: user
       MYSQL_PASSWORD: password
+      TZ: Asia/Tokyo
     ports:
       - "3306:3306"
     volumes:
