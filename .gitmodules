@@ -1,6 +1,6 @@
 [submodule "client"]
 	path = client
-	url = https://github.com/MasatoraSakikoyama/supermarket_task_client.git
+	url = git@github.com:MasatoraSakikoyama/supermarket_task_client.git
 [submodule "server"]
 	path = server
-	url = https://github.com/MasatoraSakikoyama/supermarket_task_server.git
+	url = git@github.com:MasatoraSakikoyama/supermarket_task_server.git
