@@ -12,7 +12,6 @@
 - **nginx**: プロキシサーバー (localhost:80)
 - **client**: Vite開発サーバー
 - **redis**: セッション管理・キャッシュ用Redis
-- **rdb**: MySQL データベース
 
 ## セットアップ
 
