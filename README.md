@@ -11,7 +11,8 @@
 
 - **nginx**: プロキシサーバー (localhost:80)
 - **client**: Vite開発サーバー
-- **localstack**: AWS LocalStack (Lambda, API Gateway, DynamoDB, S3)
+- **redis**: セッション管理・キャッシュ用Redis
+- **rdb**: MySQL データベース
 
 ## セットアップ
 

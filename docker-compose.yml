@@ -42,14 +42,10 @@ services:
     volumes:
       - ./server:/app
     environment:
-      AWS_ACCESS_KEY_ID: test
-      AWS_SECRET_ACCESS_KEY: test
-      AWS_REGION: ap-northeast-1
-      AWS_EX2_METADATA_DISABLED: true
       DATABASE_URL: mysql+pymysql://user:password@rdb:3306/develop
-      DYNAMODB_TABLE_NAME: Users
-      DYNAMODB_REGION: ap-northeast-1
-      DYNAMODB_ENDPOINT_URL: http://localstack:4566
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
       JWT_SECRET_KEY: develop
       JWT_ALGORITHM: HS256
       JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 30
@@ -64,28 +60,23 @@ services:
       retries: 3
       start_period: 10s
     depends_on:
-      localstack:
+      redis:
         condition: service_healthy
       rdb:
         condition: service_started
     restart: always
 
-  localstack:
-    image: localstack/localstack:3.0
-    environment:
-      SERVICES: dynamodb
-      DEBUG: 1
-      DEFAULT_REGION: ap-northeast-1
-    volumes:
-      - localstack-data:/var/lib/localstack
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./localstack/init-scripts:/etc/localstack/init/ready.d
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
     networks:
       - app-network
     ports:
-      - "4566:4566"
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"] 
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 5s
       retries: 3
@@ -113,5 +104,5 @@ networks:
     driver: bridge
 
 volumes:
-  localstack-data:
+  redis-data:
   rdb-data:
