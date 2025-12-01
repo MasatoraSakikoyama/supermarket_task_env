@@ -8,7 +8,7 @@ services:
     depends_on:
       client:
         condition: service_healthy
-      localstack:
+      server:
         condition: service_healthy
     networks:
       - app-network
@@ -33,18 +33,41 @@ services:
       retries: 3
       start_period: 10s
 
+  server:
+    build:
+      context: ./server
+      dockerfile: ../docker/server.Dockerfile
+    volumes:
+      - ./server:/app
+    environment:
+      - AWS_DEFAULT_REGION=ap-northeast-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - DYNAMODB_ENDPOINT=http://localstack:4566
+    networks:
+      - app-network
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      localstack:
+        condition: service_healthy
+      rdb:
+        condition: service_started
+
   localstack:
     image: localstack/localstack:3.0
     environment:
-      - SERVICES=lambda,apigateway,dynamodb
+      - SERVICES=dynamodb
       - DEBUG=1
-      - DOCKER_HOST=unix:///var/run/docker.sock
       - AWS_DEFAULT_REGION=ap-northeast-1
-      - LAMBDA_DOCKER_NETWORK=app-network
     volumes:
-      - ./server:/app
       - localstack-data:/var/lib/localstack
-      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - app-network
     ports:
@@ -55,8 +78,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    depends_on:
-      - rdb
 
   rdb:
     image: mysql:8.0
