@@ -111,4 +111,4 @@ dc-shell-client:
 
 # serverコンテナのシェルに入る
 dc-shell-server:
-	docker compose exec -it server sh
+	docker compose exec -it server bash
