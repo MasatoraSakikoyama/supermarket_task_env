@@ -37,6 +37,7 @@ else
   # enable TTL on attribute 'ttl'
   echo "[init] enabling TTL on attribute 'ttl'"
   awslocal dynamodb update-time-to-live \
+    --region ap-northeast-1 \
     --table-name "${TABLE_NAME}" \
     --time-to-live-specification "Enabled=true,AttributeName=ttl"
 
